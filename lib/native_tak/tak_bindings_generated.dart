@@ -13,6 +13,7 @@ import 'package:tak/native_tak/is_registered_response.dart';
 import 'package:tak/native_tak/tak_byte_array_response.dart';
 import 'package:tak/native_tak/tak_byte_buffer.dart';
 import 'package:tak/native_tak/tak_id_response.dart';
+import 'package:tak/tls/tls_connection_response.dart';
 
 /// Bindings for `src/native_tak.h`.
 ///
@@ -275,4 +276,72 @@ class TakBindings {
               ffi.Pointer<ffi.Char>)>>('native_storageDeleteEntry');
   late final _native_storageDeleteEntry = _native_storageDeleteEntryPtr
       .asFunction<int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
+
+  TlsConnectionResponse native_tlsConnectSecurePinning(
+      ffi.Pointer<ffi.Char> fqdn, ffi.Pointer<ffi.Char> port, int timeout) {
+    return _native_tlsConnectSecurePinning(fqdn, port, timeout);
+  }
+
+  late final _native_tlsConnectSecurePinningPtr = _lookup<
+      ffi.NativeFunction<
+          TlsConnectionResponse Function(
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Int32)>>('native_tlsConnectSecurePinning');
+  late final _native_tlsConnectSecurePinning =
+      _native_tlsConnectSecurePinningPtr.asFunction<
+          TlsConnectionResponse Function(
+              ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>, int)>();
+
+  TakByteBufferResponse native_tlsReadAll(int socketDescriptor) {
+    return _native_tlsReadAll(socketDescriptor);
+  }
+
+  late final _native_tlsReadAllPtr =
+      _lookup<ffi.NativeFunction<TakByteBufferResponse Function(ffi.Int32)>>(
+          'native_tlsReadAll');
+  late final _native_tlsReadAll =
+      _native_tlsReadAllPtr.asFunction<TakByteBufferResponse Function(int)>();
+
+  TakByteBufferResponse native_tlsRead(int socketDescriptor, int max) {
+    return _native_tlsRead(socketDescriptor, max);
+  }
+
+  late final _native_tlsReadPtr = _lookup<
+      ffi.NativeFunction<
+          TakByteBufferResponse Function(
+              ffi.Int32, ffi.Int32)>>('native_tlsRead');
+  late final _native_tlsRead =
+      _native_tlsReadPtr.asFunction<TakByteBufferResponse Function(int, int)>();
+
+  int native_tlsWrite(int socketDescriptor, ffi.Pointer<ffi.Char> data) {
+    return _native_tlsWrite(socketDescriptor, data);
+  }
+
+  late final _native_tlsWritePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int32 Function(
+              ffi.Int32, ffi.Pointer<ffi.Char>)>>('native_tlsWrite');
+  late final _native_tlsWrite = _native_tlsWritePtr
+      .asFunction<int Function(int, ffi.Pointer<ffi.Char>)>();
+
+  int native_tlsClose(int socketDescriptor) {
+    return _native_tlsClose(socketDescriptor);
+  }
+
+  late final _native_tlsClosePtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Int32)>>(
+          'native_tlsClose');
+  late final _native_tlsClose =
+      _native_tlsClosePtr.asFunction<int Function(int)>();
+
+  bool native_tlsIsClosed(int socketDescriptor) {
+    return _native_tlsIsClosed(socketDescriptor);
+  }
+
+  late final _native_tlsIsClosedPtr =
+      _lookup<ffi.NativeFunction<ffi.Bool Function(ffi.Int32)>>(
+          'native_tlsIsClosed');
+  late final _native_tlsIsClosed =
+      _native_tlsIsClosedPtr.asFunction<bool Function(int)>();
 }

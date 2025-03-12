@@ -1,10 +1,16 @@
+require 'yaml'
+
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
 # Run `pod lib lint tak.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
+  # Retreive plugin's version
+  pubspec_path = File.join(__dir__, '../pubspec.yaml')
+  pubspec = YAML.load_file(pubspec_path)
+
   s.name             = 'tak'
-  s.version          = '2.17.5'
+  s.version          = pubspec['version']
   s.summary          = 'TAK Flutter FFI plugin project.'
   s.description      = <<-DESC
 TAK Flutter FFI plugin project.

@@ -8,6 +8,7 @@ import 'package:tak/native_tak/tak_bindings_generated.dart';
 import 'package:tak/native_tak/tak_byte_array_response.dart';
 import 'package:tak/native_tak/tak_byte_buffer.dart';
 import 'package:tak/native_tak/tak_id_response.dart';
+import 'package:tak/tls/tls_connection_response.dart';
 
 /// A very short-lived native function.
 ///
@@ -74,6 +75,25 @@ TakByteBufferResponse nativeReadSecureStorage(
 
 int nativeStorageDeleteEntry(Pointer<Char> storageName, Pointer<Char> key) =>
     _bindings.native_storageDeleteEntry(storageName, key);
+
+TlsConnectionResponse nativeTlsConnectSecurePinning(
+        Pointer<Char> fqdn, Pointer<Char> port, int timeout) =>
+    _bindings.native_tlsConnectSecurePinning(fqdn, port, timeout);
+
+TakByteBufferResponse nativeTlsReadAll(int socketDescriptor) =>
+    _bindings.native_tlsReadAll(socketDescriptor);
+
+TakByteBufferResponse nativeTlsRead(int socketDescriptor, int max) =>
+    _bindings.native_tlsRead(socketDescriptor, max);
+
+int nativeTlsWrite(int socketDescriptor, Pointer<Char> data) =>
+    _bindings.native_tlsWrite(socketDescriptor, data);
+
+bool nativeTlsIsClosed(int socketDescriptor) =>
+    _bindings.native_tlsIsClosed(socketDescriptor);
+
+int nativeTlsClose(int socketDescriptor) =>
+    _bindings.native_tlsClose(socketDescriptor);
 
 const String _libName = 'tak_flutter_wrapper';
 

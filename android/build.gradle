@@ -2,12 +2,9 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
 group 'com.build38.tak.flutter'
-version '2.17.5'
+version getFlutterVersion()
 
 buildscript {
-    // Project version
-    ext.project_version = "2.17.5-SNAPSHOT"
-
     repositories {
         google()
         mavenCentral()
@@ -84,5 +81,17 @@ android {
         if (Os.isFamily(Os.FAMILY_MAC) && file("tools/UpdateBinary/macos/UpdateBinary").exists()) {
             preBuild.dependsOn(removeAppleQuarantine)
         } 
+    }
+}
+
+def getFlutterVersion() {
+    def takProject = project(':tak')
+    def pubspecFile = new File(takProject.projectDir, "../pubspec.yaml")
+    def versionLine = pubspecFile.text.split('\n').find { it.startsWith("version:") }
+    
+    if (versionLine) {
+        return versionLine.split(":")[1].trim()
+    } else {
+        return "Unknown"
     }
 }

@@ -11,6 +11,7 @@ import 'package:tak/native_tak/tak.dart';
 import 'package:tak/root_status_response.dart';
 import 'package:tak/secure_storage.dart';
 import 'package:tak/tak_return_codes.dart';
+import 'package:tak/tls/tak_client_http.dart';
 
 /// A class representing the T.A.K Plugin for interacting with the SDK.
 ///
@@ -295,7 +296,7 @@ class TakPlugin {
   ///   - [ TakReturnCode.generalError ] : When an unexpected error happens.
   ///   - [ TakReturnCode.apiNotInitialized ] when T.A.K is not in an "initialized" status
   ///                                         (i.e. `tak.dispose()` has been called).
-  void stopRuntimeThreat() {
+  void stopRuntimeThread() {
     int response = nativeStopRuntimeThread();
     TakReturnCode mapResponse = TakReturnCodeMapper.mapErrorCode(response);
     if (mapResponse != TakReturnCode.success) {
@@ -334,5 +335,23 @@ class TakPlugin {
     }
 
     return SecureStorage(storageName, this);
+  }
+
+  /// Creates a HTTP Client that is using the T.A.K Secure Channel internally.
+  /// Certificate Pinning is enforced.
+  /// 
+  /// If host requests client authentication, the client private key and certificate will be used to authenticate.
+  ///
+  /// Returns a [TakHttpClient] object.
+  ///
+  /// Throws [TakException] with the following error codes:
+  /// - [TakReturnCode.apiNotInitialized] when the library is not initialized.
+  ///
+  TakHttpClient getHttpClient() {
+    if (!isInitialized()) {
+      throw TakException(TakReturnCode.apiNotInitialized);
+    }
+
+    return TakHttpClient();
   }
 }
