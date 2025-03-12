@@ -53,8 +53,8 @@ typedef enum {
  */
 typedef enum {
     KEY_ALGO_AES_256,
-    KEY_ALGO_RSA_2048, /*\deprecated Since version 2.8.0. Consider to migrate to EC license instead. */
     KEY_ALGO_RSA_1024, /*\deprecated Not to be used. Not supported since version 2.17.0, kept the enum for compatibility. */
+    KEY_ALGO_RSA_2048, /*\deprecated Since version 2.8.0. Consider to migrate to EC license instead. */
     KEY_ALGO_EC_SECP256R1,
     KEY_ALGO_AES_128 /* Use only if KEY_ALGO_AES_256 is not supported in your use case. */
 } TAK_KEY_ALGORITHM;
@@ -522,6 +522,52 @@ The workingPath has to point to a directory in the filesystem where the T.A.K li
                                 - The absolute path to the license file, or
                                 - The name of the license file, which has been bundled in the "assets" dir of an APK
                                 Mandatory.
+@param[in] userLink    String with the desired userLink for the user if a register is performed. 
+@param[in] env         A reference to the JNI environment. Mandatory for Android since version 2.3.0.
+@param[in] contextWrapper      \parblock
+                            An instance of the class android.content.ContextWrapper (or a subclass thereof, e.g.
+                            android.app.Application).
+
+                            It is not recommended to provide an Activity-bound context and instead use the application-wide
+                            context. If you choose to provide an Activity context, make sure to release T.A.K before
+                            using it in a different Activity.
+
+                            Mandatory for Android since version 2.3.0.
+                            \endparblock
+
+@retval TAK_SUCCESS                 If the initialization of the API was successful.
+@retval TAK_API_ALREADY_INITIALIZED If the API was previously initialized.
+@retval TAK_INVALID_PARAMETER       If any input values are invalid.
+@retval TAK_LICENSE_ABOUT_TO_EXPIRE If current date is inside grace period.
+@retval TAK_LICENSE_EXPIRED         If grace period is over and library needs to be updated.
+@retval TAK_GENERAL_ERROR           If an unexpected error has happened.
+@retval TAK_INSTANCE_LOCKED         This is a warning, the application has been remotely locked. Some of the functionalities will not be
+                                    available until instance is unlocked.
+
+@return The function returns a value of #TAK_RETURN
+******************************************************************************/
+TAK_RETURN TakLib_initializeWithUserLink(const char* workingPath,
+                             const char* licenseFilePath,
+                             const char* userLink,
+                             JNIEnv *env,
+                             jobject contextWrapper);
+
+/******************************************************************************
+*/ /**
+@brief Initializes the T.A.K library
+
+This function has to be called first before any other operation is possible.\n
+The workingPath has to point to a directory in the filesystem where the T.A.K library has permission to read and write.
+
+@ingroup TAKSESSION
+
+@param[in] workingPath          String to the directory that is writable for the application to store persistent data.
+                            Mandatory.
+@param[in] licenseFilePath         Path (either relative or absolute) to the location of the licenseKey.
+                                For Android, it can be either:
+                                - The absolute path to the license file, or
+                                - The name of the license file, which has been bundled in the "assets" dir of an APK
+                                Mandatory.
 @param[in] env         A reference to the JNI environment. Mandatory for Android since version 2.3.0.
 @param[in] contextWrapper      \parblock
                             An instance of the class android.content.ContextWrapper (or a subclass thereof, e.g.
@@ -549,7 +595,6 @@ TAK_RETURN TakLib_initialize(const char* workingPath,
                              const char* licenseFilePath,
                              JNIEnv *env,
                              jobject contextWrapper);
-
 /******************************************************************************
 */ /**
 @brief Checks whether the T.A.K lib has already been initialized.
@@ -642,7 +687,7 @@ TAK_RETURN TakLib_release(void);
 
 @ingroup TAK_Device
 
-@param[in] userHash         Hexadecimal string uniquely identifying the app user, can be NULL
+@param[in] userLink         Hexadecimal string uniquely identifying the app user, can be NULL
 
 @retval TAK_SUCCESS                     If registration succeeded.
 @retval TAK_API_NOT_INITIALIZED         If the API was not previously initialized.
@@ -657,7 +702,7 @@ TAK_RETURN TakLib_release(void);
 @retval TAK_NETWORK_TIMEOUT             If connection to the T.A.K server times out.
 @retval TAK_NETWORK_ERROR               If a network error happens during communication.
 ******************************************************************************/
-TAK_RETURN TakLib_register(const char* userHash);
+TAK_RETURN TakLib_register(const char* userLink);
 
 /******************************************************************************
 */ /**
@@ -1853,6 +1898,27 @@ TAK_RETURN TakLib_getPublicKey(const char* keyAlias, TAK_byte_buffer* publicKey)
 TAK_RETURN TakLib_blockScreenCapture(jobject* activity);
 #endif /* TARGET_ANDROID */
 
+
+/**
+ * @brief Gives the currently used UserLink
+ * 
+ * This method returns the UserLink that is currently stored in the SDK.
+ * 
+ * In case that no UserLink has been set before a new one will be provided and stored in the SDK.
+ * 
+ * The given userLink will use allocated memory.
+ * 
+ * @ingroup TAK_Device
+ * 
+ * @param[out] userLink Pointer to string that will contain the userLink used by the SDK.
+ * 
+ * @retval TAK_SUCCESS              If the userLink has been successfully retrieved.
+ * @retval  TAK_API_NOT_INITIALIZED If the API has not been initialized prior to calling this function.
+ * @retval TAK_NOT_REGISTERED       If UserLink is not present due to no previous registration.
+ * @retval TAK_INVALID_PARAMETER    If there was an issue with any of the input parameters.
+ * @retval TAK_GENERAL_ERROR        If an unexpected error occurred.
+ */
+TAK_RETURN TakLib_getUserLink(char** userLink);
 #ifdef __cplusplus
 }
 #endif

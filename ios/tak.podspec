@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'tak'
-  s.version          = '2.17.2'
+  s.version          = '2.17.5'
   s.summary          = 'TAK Flutter FFI plugin project.'
   s.description      = <<-DESC
 TAK Flutter FFI plugin project.
