@@ -55,4 +55,8 @@ int32_t native_tlsWrite(int socketDescriptor,unsigned char* bufferData);
 bool native_tlsIsClosed(int socketDescriptor);
 int32_t native_tlsClose(int socketDescriptor);
 
+// VASS
+TakByteBufferResponse native_getPinnedCertificate(const char* hostName);
+int native_updatePinnedCertificates();
+
 #endif // #ifdef NATIVE_TAK_HEADER

@@ -1913,12 +1913,50 @@ TAK_RETURN TakLib_blockScreenCapture(jobject* activity);
  * @param[out] userLink Pointer to string that will contain the userLink used by the SDK.
  * 
  * @retval TAK_SUCCESS              If the userLink has been successfully retrieved.
- * @retval  TAK_API_NOT_INITIALIZED If the API has not been initialized prior to calling this function.
+ * @retval TAK_API_NOT_INITIALIZED  If the API has not been initialized prior to calling this function.
  * @retval TAK_NOT_REGISTERED       If UserLink is not present due to no previous registration.
  * @retval TAK_INVALID_PARAMETER    If there was an issue with any of the input parameters.
  * @retval TAK_GENERAL_ERROR        If an unexpected error occurred.
  */
 TAK_RETURN TakLib_getUserLink(char** userLink);
+
+
+/**
+ * @brief Contacts Build38's cloud to retrieve and then localy store the available certificates to be
+ * used for pinning.
+ * 
+ * This method contacts Build38's Cloud to retrieve and then store the certificates that have been
+ * provided to Build38's Cloud under the license's app name. Once the certificates are retrieved, they
+ * are stored in the SDK's secure storage for later usage as pinned certificates when establishing a
+ * TLS connection to the corresponding hostname.
+ *
+ * @ingroup TAK_TLS
+ *
+ * @retval TAK_SUCCESS              If the certificates have been successfully retrieved.
+ * @retval TAK_API_NOT_INITIALIZED  If the API has not been initialized prior to calling this function.
+ * @retval TAK_NETWORK_ERROR        If the Build38 Cloud could not be reached.
+ * @retval TAK_GENERAL_ERROR        If an unexpected error occurred. */
+TAK_RETURN TakLib_updatePinnedCertificates(void);
+
+/**
+ * @brief Returns the available certificate, if any, for the given host name.
+ *
+ * This method returns the certificate corresponding to the given hosname, as a string.
+ * It'll return the localy-cached version (i.e., it'll not go online to update). If an update is needed,
+ * please use TakLib_updatePinnedCertificates(void).
+ *
+ * @ingroup TAK_TLS
+ *
+ * @param[in]   hostName            String that describes the host name of the certificate to be retrieved.
+ * @param[out]  certificate         Pointer to string that will contain the certificate if found.
+ *
+ * @retval TAK_SUCCESS              If the certificate has been successfully retrieved.
+ * @retval TAK_API_NOT_INITIALIZED  If the API has not been initialized prior to calling this function.
+ * @retval TAK_INVALID_PARAMETER    If there was an issue with any of the input parameters or the requested hostname has no certificate.
+ * @retval TAK_GENERAL_ERROR        If an unexpected error occurred.
+ */
+TAK_RETURN TakLib_getPinnedCertificate(const char* hostName, char **certificate);
+
 #ifdef __cplusplus
 }
 #endif

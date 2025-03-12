@@ -32,7 +32,8 @@ class TakPlugin {
     String workingPath = await platform.invokeMethod('loadEnvironment');
     String licenseDirectory = "flutter_assets/assets/$license";
     Pointer<Utf8> workingDir = workingPath.toNativeUtf8();
-    int response = nativeInitialize(workingDir, licenseDirectory.toNativeUtf8());
+    int response =
+        nativeInitialize(workingDir, licenseDirectory.toNativeUtf8());
     TakReturnCode mapResponse = TakReturnCodeMapper.mapErrorCode(response);
     if (mapResponse == TakReturnCode.success) {
       // If initialization is successful: do nothing.
@@ -339,7 +340,7 @@ class TakPlugin {
 
   /// Creates a HTTP Client that is using the T.A.K Secure Channel internally.
   /// Certificate Pinning is enforced.
-  /// 
+  ///
   /// If host requests client authentication, the client private key and certificate will be used to authenticate.
   ///
   /// Returns a [TakHttpClient] object.
@@ -353,5 +354,33 @@ class TakPlugin {
     }
 
     return TakHttpClient();
+  }
+
+  Uint8List getPinnedCertificates(String hostName) {
+    if (!isInitialized()) {
+      throw TakException(TakReturnCode.apiNotInitialized);
+    }
+    final response = nativeGetPinnedCertificates(
+      hostName.toNativeUtf8().cast<Char>(),
+    );
+    TakReturnCode mapResponse =
+        TakReturnCodeMapper.mapErrorCode(response.returnValue);
+    if (mapResponse != TakReturnCode.success) {
+      throw TakException(mapResponse);
+    }
+
+    return response.getValue();
+  }
+
+  void updatePinnedCertificates() {
+    if (!isInitialized()) {
+      throw TakException(TakReturnCode.apiNotInitialized);
+    }
+    int response = nativeUpdatePinnedCertificates();
+    TakReturnCode mapResponse = TakReturnCodeMapper.mapErrorCode(response);
+
+    if (mapResponse != TakReturnCode.success) {
+      throw TakException(mapResponse);
+    }
   }
 }

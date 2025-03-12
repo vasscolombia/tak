@@ -95,6 +95,12 @@ bool nativeTlsIsClosed(int socketDescriptor) =>
 int nativeTlsClose(int socketDescriptor) =>
     _bindings.native_tlsClose(socketDescriptor);
 
+TakByteBufferResponse nativeGetPinnedCertificates(Pointer<Char> hostName) =>
+    _bindings.native_getPinnedCertificates(hostName);
+
+int nativeUpdatePinnedCertificates() =>
+    _bindings.native_updatePinnedCertificates();
+
 const String _libName = 'tak_flutter_wrapper';
 
 /// The dynamic library in which the symbols for [TakBindings] can be found.

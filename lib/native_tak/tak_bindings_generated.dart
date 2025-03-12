@@ -344,4 +344,26 @@ class TakBindings {
           'native_tlsIsClosed');
   late final _native_tlsIsClosed =
       _native_tlsIsClosedPtr.asFunction<bool Function(int)>();
+
+  TakByteBufferResponse native_getPinnedCertificates(
+      ffi.Pointer<ffi.Char> hostName) {
+    return _native_getPinnedCertificate(hostName);
+  }
+
+  late final _native_getPinnedCertificatePts = _lookup<
+      ffi.NativeFunction<
+          TakByteBufferResponse Function(
+              ffi.Pointer<ffi.Char>)>>('native_getPinnedCertificate');
+  late final _native_getPinnedCertificate = _native_getPinnedCertificatePts
+      .asFunction<TakByteBufferResponse Function(ffi.Pointer<ffi.Char>)>();
+
+  int native_updatePinnedCertificates() {
+    return _native_updatePinnedCertificates();
+  }
+
+  late final _native_updatePinnedCertificatesPtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function()>>(
+          'native_updatePinnedCertificates');
+  late final _native_updatePinnedCertificates =
+      _native_updatePinnedCertificatesPtr.asFunction<int Function()>();
 }

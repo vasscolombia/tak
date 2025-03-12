@@ -10,6 +10,7 @@
 extern "C"
 {
 
+#include <stdio.h>
 #include "native_tak.h"
 
   // Public methods
@@ -332,5 +333,41 @@ extern "C"
   __attribute__((visibility("default"))) __attribute__((used)) bool native_tlsIsClosed(int socketDescriptor)
   {
     return TakLib_tlsIsClosed(socketDescriptor);
+  }
+
+
+
+  __attribute__((visibility("default"))) __attribute__((used))
+  TakByteBufferResponse
+  native_getPinnedCertificate(const char* hostName)
+  {
+
+    TakByteBufferResponse response;
+    response.returnCode = TAK_GENERAL_ERROR;
+    response.buffer.data = NULL;
+    response.buffer.length = 0;
+ 
+    // Read value
+    char* certificate = NULL;
+    response.returnCode = TakLib_getPinnedCertificate(hostName, &certificate);
+
+    if (response.returnCode == TAK_SUCCESS && certificate != NULL) { 
+        size_t certLen = strlen(certificate); 
+        response.buffer.data = (unsigned char*)malloc(certLen);
+        if (response.buffer.data != NULL) {
+            memcpy(response.buffer.data, certificate, certLen);
+            response.buffer.length = certLen; 
+        } 
+        free(certificate);
+    }
+    return response;
+  }
+
+
+  __attribute__((visibility("default"))) __attribute__((used))
+  int32_t
+  native_updatePinnedCertificates()
+  {
+    return TakLib_updatePinnedCertificates();
   }
 }
