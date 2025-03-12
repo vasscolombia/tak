@@ -1,0 +1,88 @@
+// The Android Gradle Plugin builds the native code with the Android NDK.
+import org.apache.tools.ant.taskdefs.condition.Os
+
+group 'com.build38.tak.flutter'
+version '2.17.2'
+
+buildscript {
+    // Project version
+    ext.project_version = "2.17.2-SNAPSHOT"
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        // The Android Gradle Plugin knows how to build native code with the NDK.
+        classpath 'com.android.tools.build:gradle:7.3.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.build38.tak.flutter'
+    }
+    // Bumping the plugin compileSdkVersion requires all clients of this plugin
+    // to bump the version in their app.
+    compileSdkVersion 31
+
+    // Bumping the plugin ndkVersion requires all clients of this plugin to bump
+    // the version in their app and to download a newer version of the NDK.
+    ndkVersion '25.1.8937393'
+
+    // Invoke the shared CMake build with the Android Gradle Plugin.
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+
+            // The default CMake version for the Android Gradle Plugin is 3.10.2.
+            // https://developer.android.com/studio/projects/install-ndk#vanilla_cmake
+            //
+            // The Flutter tooling requires that developers have CMake 3.10 or later
+            // installed. You should not increase this version, as doing so will cause
+            // the plugin to fail to compile for some customers of the plugin.
+            // version "3.10.2"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 19 // Get from ext.minSdk
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+
+    task removeAppleQuarantine(type:Exec) {
+        commandLine 'xattr', '-dr', 'com.apple.quarantine', 'tools/UpdateBinary/macos'
+    }
+
+    project.afterEvaluate {
+        // Path to UpdateBinary of the delivery, only apply if Mac
+        if (Os.isFamily(Os.FAMILY_MAC) && file("tools/UpdateBinary/macos/UpdateBinary").exists()) {
+            preBuild.dependsOn(removeAppleQuarantine)
+        } 
+    }
+}
