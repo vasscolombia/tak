@@ -1,6 +1,6 @@
 name: tak
 description: TAK Flutter FFI plugin project.
-version: 2.18.0
+version: 2.18.2
 homepage: https://build38.com
 
 environment:
@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   ffi: ^2.0.1
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
