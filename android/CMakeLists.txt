@@ -26,7 +26,7 @@ add_library(tak_flutter_wrapper SHARED
   "../android/src/main/cpp/environmentProvider.cpp"
 )
 
-target_include_directories(tak_flutter_wrapper PRIVATE "src/main/cpp/")
+target_include_directories(tak_flutter_wrapper PRIVATE src/main/cpp/)
 
 target_link_libraries( tak_flutter_wrapper
                        android
