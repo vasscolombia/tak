@@ -7,7 +7,18 @@ project(tak_flutter_wrapper VERSION 0.0.1 LANGUAGES C CXX)
 
 function(decode_url_path INPUT_PATH OUTPUT_VARIABLE)
     execute_process(
-        COMMAND python3 -c "import urllib.parse; print(urllib.parse.unquote('${INPUT_PATH}'))"
+        COMMAND python3 -c "
+        import urllib.parse
+        import sys
+        
+        def decode_path(path):
+            # Handle multiple encoding variations
+            path = path.replace('%47', '/')
+            path = path.replace('G', '/')  # Handle G encoded forward slashes
+            return urllib.parse.unquote(path)
+        
+        print(decode_path('${INPUT_PATH}'))
+        "
         OUTPUT_VARIABLE DECODED_PATH
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
@@ -37,7 +48,7 @@ elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows")
     if(NOT EXISTS "${UPDATE_BINARY}")
         message(WARNING "UpdateBinary.exe not found at ${UPDATE_BINARY}")
     endif()
-
+    
 elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux")
     set(UPDATE_BINARY "${TOOLS_DIR}/UpdateBinary/linux/UpdateBinary")
     if(NOT EXISTS "${UPDATE_BINARY}")
@@ -73,7 +84,7 @@ if(EXISTS "${UPDATE_BINARY}")
         TARGET tak_flutter_wrapper 
         POST_BUILD
         COMMAND "${UPDATE_BINARY}" --bin=${BINARY_PATH} --file=${ATP_FILE}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        WORKING_DIRECTORY "${TAK_ROOT_FOLDER}"
         COMMENT "Executing UpdateBinary for ${ANDROID_ABI}"
     )
 else()
