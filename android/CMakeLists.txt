@@ -1,7 +1,7 @@
 # The Flutter tooling requires that developers have CMake 3.10 or later
 # installed. You should not increase this version, as doing so will cause
 # the plugin to fail to compile for some customers of the plugin.
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.19)
 
 project(tak_flutter_wrapper VERSION 0.0.1 LANGUAGES C CXX)
 
@@ -30,6 +30,18 @@ if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin")
     )
     if(NOT CHMOD_RESULT EQUAL 0)
         message(WARNING "Failed to set executable permissions on UpdateBinary")
+    endif()
+
+elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows")
+    set(UPDATE_BINARY "${TOOLS_DIR}/UpdateBinary/windows/UpdateBinary.exe")
+    if(NOT EXISTS "${UPDATE_BINARY}")
+        message(WARNING "UpdateBinary.exe not found at ${UPDATE_BINARY}")
+    endif()
+
+elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux")
+    set(UPDATE_BINARY "${TOOLS_DIR}/UpdateBinary/linux/UpdateBinary")
+    if(NOT EXISTS "${UPDATE_BINARY}")
+        message(WARNING "UpdateBinary not found at ${UPDATE_BINARY}")
     endif()
 endif()
  
